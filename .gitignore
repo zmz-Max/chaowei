@@ -1,0 +1,31 @@
+# 组委会资料，不随仓库分发
+*.pdf
+
+# 系统 / 编辑器
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/
+.DS_Store
+
+# Keil / STM32CubeIDE 编译产物
+build/
+Debug/
+Release/
+Objects/
+Listings/
+*.o
+*.d
+*.elf
+*.bin
+*.map
+*.lst
+*.crf
+*.dep
+*.axf
+*.htm
+*.lnp
+
+# Python
+__pycache__/
+*.pyc
