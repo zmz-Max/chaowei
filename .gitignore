@@ -1,6 +1,11 @@
 # 组委会资料，不随仓库分发
 *.pdf
 
+# 临时截图 / 手机照片（根目录，不提交）
+/屏幕截图*.png
+/IMG_*.JPG
+/IMG_*.jpg
+
 # 系统 / 编辑器
 Thumbs.db
 desktop.ini
