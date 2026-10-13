@@ -142,18 +142,17 @@ def build_signal():
 
     box(d, 40, 140, 570, 232, "留空 / 保留引脚",
         ["PA9 / PA10：USART1 串口调试（预留）",
-         "PA13 / PA14：SWD 下载调试，接 ST-Link V2",
+         "PA13(SWDIO) / PA14(SWCLK) → ST-Link V2",
          "PA11 / PA12：USB，本方案不用",
          "PB2：BOOT1，不要接 · PC13：板载 LED"],
         fill=(246, 246, 248), outline=GRY, ts=25, bs=20, lh=42)
 
-    box(d, 660, 140, 560, 170, "PS2 无线手柄接收器",
-        ["SPI1 接口（直插排针转接板）", "VCC 接 3.3V，不要接 5V"],
+    box(d, 660, 140, 560, 170, "PS2 接收板（XTARK TK-PS2A）",
+        ["6 个焊盘：CLK CS CMD DAT VCC GND", "VCC 接 3.3V，不要接 5V"],
         fill=(255, 244, 232), outline=ORG, ts=27, bs=21)
     arrow(d, (940, 310), (940, 468), BLU, width=6)
-    d.text((962, 360), "PA5 → SCK ｜ PA6 → DATA(MISO)", font=F(21), fill=BLU)
-    d.text((962, 396), "PA7 → CMD(MOSI) ｜ PA4 → ATT(CS) ｜ 3.3V / GND",
-           font=F(21), fill=BLU)
+    d.text((962, 355), "CLK→PA5   CS→PA4   CMD→PA7", font=F(22), fill=BLU)
+    d.text((962, 392), "DAT→PA6   VCC→3.3V   GND→GND", font=F(22), fill=BLU)
 
     box(d, 620, 468, 560, 400, "STM32F103C8T6 核心板",
         ["TIM2 四路 PWM：PA0 / PA1 / PA2 / PA3",
