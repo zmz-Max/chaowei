@@ -53,3 +53,54 @@
 | M2（左后） | 待填 | 待填 | |
 | M3（右前） | 待填 | 待填 | |
 | M4（右后） | 待填 | 待填 | |
+
+---
+
+# PS2 手柄遥控（`ps2_driver/`）
+
+## 文件说明
+
+- `ps2_driver/ps2.h`、`ps2_driver/ps2.c`：手柄驱动，加入工程即可（CLion 下记得把 `ps2.c` 加进 `CMakeLists.txt` 的源文件列表）
+- `ps2_driver/main_ps2_test.c`：粘进 `main.c` 三段 `USER CODE` 区的测试代码
+
+## 接线（接收板丝印 → 主控）
+
+| 接收板 | STM32 |
+| --- | --- |
+| `CLK` | PA5（SPI1_SCK） |
+| `CS` | PA4（普通 GPIO，软件片选） |
+| `CMD` | PA7（SPI1_MOSI） |
+| `DAT` | PA6（SPI1_MISO） |
+| `VCC` | 3.3V |
+| `GND` | GND |
+
+## CubeMX 里要补的配置
+
+| 项目 | 设置 |
+| --- | --- |
+| SPI1 | Mode = Full-Duplex Master（2Lines Full Duplex） |
+| SPI1 | Hardware NSS Signal = Disable（片选自己做） |
+| SPI1 | Data Size = 8 Bits、First Bit = **LSB First** |
+| SPI1 | Prescaler = **256**（约 281kHz） |
+| SPI1 | Clock Polarity = **High**、Clock Phase = **2 Edge** |
+| SPI1 | CRC Calculation = Disabled |
+| PA4 | GPIO_Output，初始电平 **High**（片选空闲为高） |
+
+## 测试里程碑
+
+1. **第一关：通信**。上电后 PC13 的 LED **常亮** = 手柄通信成功；如果 LED 快闪，说明没收到应答，按下面的排错清单查。
+2. **第二关：遥控**。十字键 ↑ 前进、↓ 后退、← 原地左转、→ 原地右转，× 键横移，松手即停。
+3. 两个都通了，中期考核的“底盘运动（单一 / 全部）”两个指标就能拍视频交材料了。
+
+## 排错清单（LED 不常亮时按顺序查）
+
+1. `VCC` 是不是接了 3.3V（接 5V 可能烧接收板）。
+2. `CMD` / `DAT` 是否接反——这两根是交叉关系，最容易错。
+3. 主控和接收板是否**共地**。
+4. CubeMX 里 `First Bit` 是不是 LSB First、`Clock Polarity` 是不是 High、`Clock Phase` 是不是 2 Edge，这三个配错一定会读不到数据。
+5. 接收板与手柄是否配对（多数出厂已配对，必要时按接收板上的配对键重新配对）。
+6. 实在读不到，可以在 `DAT` 与 3.3V 之间并一个 10k 上拉电阻（部分接收板的 MISO 是开漏输出）。
+
+## 摇杆读不到（值一直是 128 或 0）
+
+说明接收板还停在数字模式。先按一下手柄上的 **ANALOG** 键（指示灯亮起），很多无线手柄需要手动切模拟模式；若仍不行，再检查 `PS2_Init()` 里那 4 条配置命令是否被执行（它们负责把接收板切到模拟模式）。
