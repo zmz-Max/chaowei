@@ -1,34 +1,25 @@
 @echo off
-rem ===================================================================
-rem  åŒå‡»æœ¬æ–‡ä»¶å³å¯æŠŠå›ºä»¶çƒ§å½•åˆ° STM32ï¼ˆæ”¾åœ¨é¡¹ç›®æ ¹ç›®å½•ï¼Œæ–¹ä¾¿æ‰¾ï¼‰
-rem  å‰æï¼šST-Link å·²æ’åœ¨ç”µè„‘ä¸Šï¼Œæ¿å­å·²é€šç”µï¼ˆUSB æˆ– 3.3Vï¼‰
-rem ===================================================================
-setlocal enabledelayedexpansion
-
+chcp 936 >nul
+setlocal
 set "CLT=D:\STM32CubeCLT\STM32CubeCLT_1.22.0"
 set "PROG=%CLT%\STM32CubeProgrammer\bin\STM32_Programmer_CLI.exe"
-set "PROJ=%~dp0AIcar"
-set "ELF="
-
-for /d %%d in ("%PROJ%\cmake-build-debug-stm32*") do (
-    if exist "%%d\AIcar.elf" set "ELF=%%d\AIcar.elf"
-)
-
-if not defined ELF (
-    echo.
-    echo [é”™è¯¯] æ²¡æ‰¾åˆ° AIcar.elfï¼Œè¯·å…ˆåœ¨ CLion é‡Œç‚¹ä¸€æ¬¡â€œæ„å»ºâ€ã€‚
-    echo.
-    pause
-    exit /b 1
-)
-
-echo æ­£åœ¨çƒ§å½•ï¼š!ELF!
+set "ELF=%~dp0AIcar\cmake-build-debug-stm32-1\AIcar.elf"
+if not exist "%ELF%" set "ELF=%~dp0AIcar\cmake-build-debug-stm32\AIcar.elf"
+if not exist "%ELF%" set "ELF=%~dp0AIcar\build\Debug\AIcar.elf"
+if not exist "%ELF%" goto nofile
 echo.
-"%PROG%" -c port=SWD freq=1000 -w "!ELF!" -v -rst
-
+echo [flash] ELF = %ELF%
+echo.
+"%PROG%" -c port=SWD freq=1000 -w "%ELF%" -v -rst
 echo.
 echo ==================================================
-echo è‹¥ä¸Šé¢å‡ºç° Download verified successfullyï¼Œå³çƒ§å½•æˆåŠŸã€‚
-echo ä¹‹åæ¿ä¸Š PC13 é‚£é¢—ç¯åº”å¿«é€Ÿé—ªçƒï¼ˆæ‰‹æŸ„æœªæ¥æ—¶çš„æ­£å¸¸æç¤ºï¼‰ã€‚
+echo ³öÏÖ Download verified successfully ¼´ÉÕÂ¼³É¹¦¡£
+echo ÉÕÍêºó PC13 µÆÓ¦¿ìËÙÉÁË¸£¨ÊÖ±úÎ´½ÓÊ±µÄÕı³£ÌáÊ¾£©¡£
 echo ==================================================
+goto end
+:nofile
+echo.
+echo [´íÎó] Ã»ÕÒµ½ AIcar.elf£¬ÇëÏÈÔÚ CLion ÀïµãÒ»´Î¡°¹¹½¨¡±¡£
+:end
+echo.
 pause
