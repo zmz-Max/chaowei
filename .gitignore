@@ -15,6 +15,7 @@ desktop.ini
 
 # Keil / STM32CubeIDE 编译产物
 build/
+cmake-build-*/
 Debug/
 Release/
 Objects/
