@@ -6,6 +6,10 @@
 /*.png
 /IMG_*.JPG
 /IMG_*.jpg
+/IMG_*.MP4
+/IMG_*.mp4
+/*.MP4
+/*.mp4
 
 # 系统 / 编辑器
 Thumbs.db
