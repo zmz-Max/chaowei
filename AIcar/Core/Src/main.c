@@ -135,6 +135,41 @@ int main(void)
       HAL_Delay(100);
     }
   }
+
+  /* ================= 通道标定（临时调试，查完可删） =================
+     上电后自动跑一遍，用来核对“定时器通道 ↔ 实际哪个轮子”的对应关系：
+       第 1 段：全部停 3 秒 —— 此时四个轮子必须完全静止；
+       第 2~5 段：每段只驱动一个通道（正转 40%），持续 2 秒，
+                 该段开始前 LED 会闪 N 下（闪 1 下 = M1，2 下 = M2……）。
+     观察并记录：闪 N 下之后，是哪个轮子在动、往哪个方向动。 */
+  Car_Set(0, 0, 0, 0);
+  HAL_Delay(3000);                       /* 全部停 3 秒：四个轮子应静止 */
+
+  for (int m = 0; m < 4; m++) {
+    Car_Set(0, 0, 0, 0);
+    HAL_Delay(300);
+
+    for (int k = 0; k <= m; k++) {       /* 闪 m+1 下，提示将要驱动第几个通道 */
+      HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, GPIO_PIN_RESET);
+      HAL_Delay(150);
+      HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, GPIO_PIN_SET);
+      HAL_Delay(150);
+    }
+    HAL_Delay(600);
+
+    switch (m) {                         /* 只驱动当前通道 */
+      case 0: Motor_Set(TIM_CHANNEL_1, GPIO_PIN_12, 40); break;
+      case 1: Motor_Set(TIM_CHANNEL_2, GPIO_PIN_13, 40); break;
+      case 2: Motor_Set(TIM_CHANNEL_3, GPIO_PIN_14, 40); break;
+      case 3: Motor_Set(TIM_CHANNEL_4, GPIO_PIN_15, 40); break;
+      default: break;
+    }
+    HAL_Delay(2000);
+  }
+
+  Car_Set(0, 0, 0, 0);
+  HAL_Delay(1000);
+  /* ================= 标定结束，进入正常遥控 ================= */
   /* USER CODE END 2 */
 
   /* Infinite loop */
